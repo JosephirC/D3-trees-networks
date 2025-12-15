@@ -20,6 +20,17 @@ d3.json("data/got_social_graph.json").then((d) => {
     const edges = d.links;
 
     const adjacency_matrix = createAdjacencyMatrix(nodes, edges);
-    console.log("Matrice d'adjacence créée", adjacency_matrix);
+
+// Trouver le poids maximum pour l'échelle de couleur
+const maxWeight = d3.max(nodes, d => d.influence);
+
+const scale = d3.scaleQuantize()
+    .domain([0, maxWeight])
+    .range(d3.schemeBlues[9]);
+
+
 
 });
+
+
+
