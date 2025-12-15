@@ -16,17 +16,40 @@ const svg = d3
 
 //Chargement des données
 d3.json("data/got_social_graph.json").then((d) => {
-    const nodes = d.nodes;
-    const edges = d.links;
 
-    const adjacency_matrix = createAdjacencyMatrix(nodes, edges);
+  const nodes = d.nodes;
+  const edges = d.links;
 
-// Trouver le poids maximum pour l'échelle de couleur
-const maxWeight = d3.max(nodes, d => d.influence);
+  const adjacency_matrix = createAdjacencyMatrix(nodes, edges);
 
-const scale = d3.scaleQuantize()
+  // Trouver le poids maximum pour l'échelle de couleur
+  const maxWeight = d3.max(nodes, d => d.influence);
+
+  const scale = d3.scaleQuantize()
     .domain([0, maxWeight])
     .range(d3.schemeBlues[9]);
+
+
+  // 4. Afficher une 1e matrice d'adjacence
+  const matrixViz = svg
+    .selectAll("rect")
+    .data(adjacency_matrix)
+    .join("rect")
+    .attr("width", 6)
+    .attr("height", 6)
+    .attr("x", function (d) {  // source → x
+      return d.x * 6;
+    })
+    .attr("y", function (d) {  // target → y
+      return d.y * 6;
+    })
+    .style("stroke", "black")
+    .style("stroke-width", ".0px")
+    .style("fill", function (d) { // couleur selon weight
+      return scale(d.weight);
+
+  });
+
 
 
 
