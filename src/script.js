@@ -23,7 +23,8 @@ d3.json("data/got_social_graph.json").then((d) => {
   const adjacency_matrix = createAdjacencyMatrix(nodes, edges);
 
   // Trouver le poids maximum pour l'échelle de couleur
-  const maxWeight = d3.max(nodes, d => d.influence);
+  const maxWeight = d3.max(adjacency_matrix, d => d.weight);
+
 
   const scale = d3.scaleQuantize()
     .domain([0, maxWeight])
@@ -37,19 +38,21 @@ d3.json("data/got_social_graph.json").then((d) => {
     .join("rect")
     .attr("width", 6)
     .attr("height", 6)
-    .attr("x", function (d) {  // source → x
+    .attr("x", function (d) {
+      // source → x
       return d.x * 6;
     })
-    .attr("y", function (d) {  // target → y
+    .attr("y", function (d) {
+      // target → y
       return d.y * 6;
     })
-    .style("stroke", "black")
-    .style("stroke-width", ".0px")
-    .style("fill", function (d) { // couleur selon weight
+    .style("stroke", "white")
+    .style("stroke-width", 0.5)
+    .style("fill", function (d) {
+      // couleur selon weight
       return scale(d.weight);
 
   });
-
 
 
 
