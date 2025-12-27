@@ -18,8 +18,18 @@
         <p class="authors">Youssef Abida (p2024398) — Nathan Corroler (p2208035)</p>
     </header>
 
-    <!-- Matrice-->
-    <div id="matrice"></div>
+    <div id="matrix-container">
+        <!-- Selecteur de visualisation -->
+        <select id="visualisation">
+            <option value="appearances">Appearances</option>
+            <option value="zones">Zones</option>
+            <option value="influences">Influences</option>
+        </select>
+
+        <!-- Matrice-->
+        <div id="matrice"></div>
+    </div>
+
 
     <!-- Script du projet -->
     <script type="module" src="./src/script.js"></script>
