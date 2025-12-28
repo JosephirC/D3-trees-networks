@@ -133,42 +133,125 @@ d3.json("data/got_social_graph.json").then((d) => {
     .text(d => d.character);
 
   // 7 Ré-ordonnancement et animation
+  const orderAppearances = d3.range(nodes.length); // ordre par défaut
+
+  const orderZones = nodes
+    .map((d, i) => ({ i, zone: d.zone }))
+    .sort((a, b) => d3.ascending(a.zone, b.zone))
+    .map(d => d.i);
+
+  const orderInfluences = d3.range(nodes.length)
+    .sort((a, b) =>
+      d3.descending(
+        nodes[a].influence ?? 0,
+        nodes[b].influence ?? 0
+      )
+    );
+
+
+  // 7.1
+
+  // function update(newPositions) {
+  //
+  //   // Map : index réel du node -> position visuelle
+  //   const position = new Map(newPositions.map((d, i) => [d, i]));
+  //
+  //   // Labels lignes
+  //   rows
+  //     .attr("y", (d, i) =>
+  //       echellexy(position.get(i)) + echellexy.bandwidth() / 2
+  //     );
+  //
+  //   // Labels colonnes
+  //   columns
+  //     .attr("x", (d, i) =>
+  //       echellexy(position.get(i)) + echellexy.bandwidth() / 2
+  //     )
+  //     .attr("y", -echellexy.bandwidth() / 2)
+  //     .attr("transform", (d, i) =>
+  //       `rotate(-90,
+  //       ${echellexy(position.get(i)) + echellexy.bandwidth() / 2},
+  //       ${-echellexy.bandwidth() / 2}
+  //     )`
+  //     );
+  //
+  //   // Cellules de la matrice
+  //   matrixViz
+  //     .attr("x", d => echellexy(position.get(d.x)) + decalage_label)
+  //     .attr("y", d => echellexy(position.get(d.y)) + decalage_label);
+  // }
+
+
+  // 7.2 Animation
   function update(newPositions) {
 
+    // Mise à jour du domaine de l’échelle
     echellexy.domain(newPositions);
 
+    const delay = 0;
+    const duration = 1000;
+
+    // Labels lignes
     rows
+      .transition()
+      .delay(delay)
+      .duration(duration)
       .attr("y", (d, i) =>
         echellexy(i) + echellexy.bandwidth() / 2
       );
 
+    // Labels colonnes
     columns
-      .attr(
-        "transform",
-        (d, i) =>
-          `rotate(-90,
-          ${echellexy(i) + echellexy.bandwidth() / 2},
-          ${-echellexy.bandwidth() / 2}
-        )`
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr("x", (d, i) =>
+        echellexy(i) + echellexy.bandwidth() / 2
+      )
+      .attr("y", -echellexy.bandwidth() / 2)
+      .attr("transform", (d, i) =>
+        `rotate(-90,
+        ${echellexy(i) + echellexy.bandwidth() / 2},
+        ${-echellexy.bandwidth() / 2}
+      )`
       );
 
+    // Cellules de la matrice
     matrixViz
-      .attr("x", d => echellexy(d.x) + decalage_label)
-      .attr("y", d => echellexy(d.y) + decalage_label);
+      .transition()
+      .delay(delay)
+      .duration(duration)
+      .attr("x", d =>
+        echellexy(d.x) + decalage_label
+      )
+      .attr("y", d =>
+        echellexy(d.y) + decalage_label
+      );
   }
 
 
 
 
+
+
+
+
+
   d3.select("#visualisation").on("change", function () {
-    if (this.value === "appearances") update(orderAppearances);
-    if (this.value === "zones") update(orderZones);
-    if (this.value === "influences") update(orderInfluences);
+    const value = this.value;
+
+    if (value === "appearances") {
+      update(orderAppearances);
+    } else if (value === "zones") {
+      update(orderZones);
+    } else if (value === "influences") {
+      update(orderInfluences);
+    }
   });
 
-  console.log("appearances", d.appearances);
-  console.log("zones", d.zones);
-  console.log("influences", d.influences);
+
+  // 7.2 Animation au chargement
+
 
 });
 
